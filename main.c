@@ -32,18 +32,21 @@ void menuadm(){
 }
 
 int main(){
+    Lista lista;
+    lista.inicio = NULL;
     int id;
     int n;
-    Produtos *p = (Produtos *)malloc(sizeof(Produtos));
-    Cadastro *c = (Cadastro *)malloc(sizeof(Cadastro));
+    Produtos *p;
+    Cadastro c;
     setlocale(LC_ALL, "Portuguese");
     int tp, op, op2;
-    printf("===========Olá, seja bem vindo a farmacia===========\n");
+    editarcadastro(&lista, c);
+    /*printf("===========Olá, seja bem vindo a farmacia===========\n");
     printf("1 - Usuario Novo.\n");
     printf("2 - Usuario Existente\n");
     scanf("%i", &op);
     if(op == 1){
-        cadastrar(c);
+        cadastrar(&lista, c);
     }else if(op == 2){
         login(c);
         printf("Deseja fazer login como adm[1], ou como cliente[2]? ");
@@ -70,13 +73,13 @@ int main(){
                         listarprodutos(p);
                         break;
                     case 5:
-                        editarcadastro(c);
+                        editarcadastro(&lista, c);
                         break;
                     case 6:
-                        removerUsuario(c);
+                        removerUsuario(&lista, c);
                         break;
                     case 7:
-                        listarusuarios(c);
+                        listarusuarios(&lista, c);
                         break;
                     case 8:
                         verificarentrega(et);
@@ -136,6 +139,6 @@ int main(){
                 }
             }while(op != 3);
         }
-    }
+    }*/
     return(0);
 }

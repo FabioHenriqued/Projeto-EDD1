@@ -70,39 +70,47 @@ int emailvalido(char c[]){
     }
 }
 
-void cadastrar(Cadastro *c){
+void cadastrar(Lista *lista, Cadastro c){
     FILE *nome = fopen("nome.txt", "a");
     FILE *email = fopen("email.txt", "a");
     FILE *senha = fopen("senha.txt", "a");
     
     printf("Informe seu nome completo: \n");
-    scanf(" %s", c->nome);
+    scanf(" %s", c.nome);
     
     printf("Informe seu email: \n");
-    scanf(" %s", c->email);
+    scanf(" %s", c.email);
     
     printf("Informe uma senha: \n");
-    scanf(" %i", &c->senha);
+    scanf(" %i", &c.senha);
 
-    int emailv = emailvalido(c->email);
+    int emailv = emailvalido(c.email);
     
     if(emailv == 1){
-        fprintf(nome, "%s\n", c->nome);
-        fprintf(email, "%s\n", c->email);
-        fprintf(senha, "%i\n", c->senha);
+        struct No *novo = (struct No*)malloc(sizeof(struct No));
+        novo->dado = c;
+        novo->prox = lista->inicio;
+        lista->inicio = novo;
     }else if(emailv == 0){
         printf("Email invalido, digite novamente: ");
-        scanf("%s", c->email);
-        int emailv = emailvalido(c->email);
+        scanf("%s", c.email);
+        int emailv = emailvalido(c.email);
         while(emailv == 0){
-            printf("entrou");
             printf("Email invalido, digite novamente: ");
-            scanf("%s", c->email);
-            emailv = emailvalido(c->email);
+            scanf("%s", c.email);
+            emailv = emailvalido(c.email);
         }
-        fprintf(nome, "%s\n", c->nome);
-        fprintf(email, "%s\n", c->email);
-        fprintf(senha, "%i\n", c->senha);
+        struct No *novo = (struct No*)malloc(sizeof(struct No));
+        novo->dado = c;
+        novo->prox = lista->inicio;
+        lista->inicio = novo;
+    }
+
+    struct No *pi;
+    for(pi = lista->inicio; pi != NULL; pi = pi->prox){
+        fprintf(nome, "%s\n", pi->dado.nome);
+        fprintf(email, "%s\n", pi->dado.email);
+        fprintf(senha, "%i\n", pi->dado.senha);
     }
 
     fclose(nome);
@@ -110,61 +118,89 @@ void cadastrar(Cadastro *c){
     fclose(senha);
 }
 
-void editarcadastro(Cadastro *c) {
+void editarcadastro(Lista *lista, Cadastro c) {
     int i = 0, encontrado = 0;
     char nome_ex[50];
 
+    FILE *nome = fopen("nome.txt", "r");
+    FILE *email = fopen("email.txt", "r");
+    FILE *senha = fopen("senha.txt", "r");
+
+    printf("Digite o nome do usuario que deseja editar: ");
+    scanf("%s", nome_ex);
+
+    while(fscanf(nome, "%s", c.nome ) && fscanf(email, "%s", c.email) && fscanf(senha, "%i", &c.senha) != EOF){
+        struct No *novo = (struct No*)malloc(sizeof(struct No));
+        novo->dado = c;
+        novo->prox = lista->inicio;
+        lista->inicio = novo;
+    }
+    fclose(nome);
+    fclose(email);
+    fclose(senha);
+
+    struct No *pi;
+    for(pi = lista->inicio; pi != NULL && strcmp(nome_ex, pi->dado.nome) != 0; pi = pi->prox);
+    if(pi == NULL){
+        printf("Usuario não existe.");
+    }
+    else{
+        char nome_novo[50];
+        char email_novo[50];
+        int senha_novo;
+
+        printf("Informe o novo nome: ");
+        scanf("%s", nome_novo);
+        printf("informe o novo email: ");
+        scanf("%s", email_novo);
+        printf("Informe a nova senha:");
+        scanf("%i", &senha_novo);
+
+        strcpy(pi->dado.nome, nome_novo);
+        strcpy(pi->dado.email, email_novo);
+        pi->dado.senha = senha_novo;
+    }
+
+    nome = fopen("nome.txt", "w");
+    email = fopen("email.txt", "w");
+    senha = fopen("senha.txt", "w");
+
+    struct No *pi2;
+    for(pi2 = lista->inicio; pi2 != NULL; pi2 = pi2->prox){
+        fprintf(nome, "%s\n", pi2->dado.nome);
+        fprintf(email, "%s\n", pi2->dado.email);
+        fprintf(senha, "%i\n", pi2->dado.senha);
+    }
+
+    fclose(nome);
+    fclose(email);
+    fclose(senha);
+}
+
+void listarusuarios(Lista *lista, Cadastro c){
     FILE *nomeFile = fopen("nome.txt", "r");
     FILE *emailFile = fopen("email.txt", "r");
     FILE *senhaFile = fopen("senha.txt", "r");
-
-    printf("Digite o nome do usuario que deseja excluir: ");
-    scanf("%s", nome_ex);
-
-    while(fscanf(nomeFile, "%s", c[i].nome) && fscanf(emailFile, "%s", c[i].email) && fscanf(senhaFile, "%i", &c[i].senha) != EOF){
-
-        if(strcmp(nome_ex, c[i].nome) == 0){
-            printf("Digite um novo nome: ");
-            scanf("%s", c[i].nome);
-
-            printf("Digite um novo e-mail: ");
-            scanf("%s", c[i].email);
-
-            printf("Digite uma nova senha: ");
-            scanf("%i", &c[i].senha);
-        }
-        i++;
-    }
-    fclose(nomeFile);
-    fclose(emailFile);
-    fclose(senhaFile);
-
-    nomeFile = fopen("nome.txt", "w");
-    emailFile = fopen("email.txt", "w");
-    senhaFile = fopen("senha.txt", "w");
-
-    for(int j = 0; j < i; j++){
-        fprintf(nomeFile, "%s\n", c[j].nome);
-        fprintf(emailFile, "%s\n", c[j].email);
-        fprintf(senhaFile, "%i\n", c[j].senha);
-    }
-    fclose(nomeFile);
-    fclose(emailFile);
-    fclose(senhaFile);
-}
-
-void listarusuarios(Cadastro *c){
-    FILE *nomeFile = fopen("nome.txt", "r");
-
     printf("===========Usuarios Disponiveis===========\n");
-    while(fscanf(nomeFile, "%s", c->nome) != EOF){
-        printf("%s\n", c->nome);
+    while(fscanf(nomeFile, "%s", c.nome) && fscanf(emailFile, "%s", c.email) && fscanf(senhaFile, "%i", &c.senha) != EOF){
+        struct No *novo = (struct No*)malloc(sizeof(struct No));
+        novo->dado = c;
+        novo->prox = lista->inicio;
+        lista->inicio = novo;
+    }
+
+    struct No *pi = lista->inicio;
+    while(pi != NULL){
+        printf("%s\n", pi->dado.nome);
+        pi = pi->prox;
     }
 
     fclose(nomeFile);
+    fclose(emailFile);
+    fclose(senhaFile);
 }
 
-void removerUsuario(Cadastro *c){
+void removerUsuario(Lista *lista, Cadastro c){
     int i = 0, encontrado = 0;
     char nome_ex[50];
     FILE *email, *nome, *senha;
@@ -176,28 +212,53 @@ void removerUsuario(Cadastro *c){
     printf("Digite o nome do usuario que deseja remover: ");
     scanf("%s", nome_ex);
 
-    while(fscanf(nome, "%s", c[i].nome ) && fscanf(email, "%s", c[i].email) && fscanf(senha, "%i", &c[i].senha) != EOF){
-            if(strcmp(nome_ex, c[i].nome) == 0){
-                printf("Usuario Removido!!");
-                encontrado = 1;
-                continue;
-            }
-            i++;
+    while(fscanf(nome, "%s", c.nome ) && fscanf(email, "%s", c.email) && fscanf(senha, "%i", &c.senha) != EOF){
+        struct No *novo = (struct No*)malloc(sizeof(struct No));
+        novo->dado = c;
+        novo->prox = lista->inicio;
+        lista->inicio = novo;
     }
 
     fclose(email);
     fclose(nome);
     fclose(senha);
 
+    if(lista->inicio == NULL){
+        printf("A lista esta vazia.\n");
+    }
+    else if(strcmp(nome_ex, lista->inicio->dado.nome) == 0){
+        struct No *pi = lista->inicio;
+        lista->inicio = pi->prox;
+        free (pi);
+    }
+    else if(lista->inicio->prox == NULL){
+        if(strcmp(nome_ex, lista->inicio->dado.nome) != 0){
+            printf("Usuario não pode ser removido");
+        }
+    }
+    else{
+        struct No *pa;
+        struct No *pi;
+        for(pi = lista->inicio; pi != NULL && strcmp(nome_ex, pi->dado.nome) != 0; pi = pi->prox){
+            pa = pi;
+        }
+        if(pi == NULL){
+            printf("O usuario não pode ser removido.");
+        }else{
+            pa->prox = pi->prox;
+            free(pi);
+        }
+    }
+
     email = fopen("email.txt", "w");
     nome = fopen("nome.txt", "w");
     senha = fopen("senha.txt", "w");
-    int j = 0;
-
-    for(j = 0; j < i; j++){
-        fprintf(nome, "%s\n", c[j].nome);
-        fprintf(email, "%s\n", c[j].email);
-        fprintf(senha, "%i\n", c[j].senha);
+    
+    struct No *pi;
+    for(pi = lista->inicio; pi != NULL; pi = pi->prox){
+        fprintf(nome, "%s\n", pi->dado.nome);
+        fprintf(email, "%s\n", pi->dado.email);
+        fprintf(senha, "%i\n", pi->dado.senha);
     }
 
     fclose(email);
