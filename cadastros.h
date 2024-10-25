@@ -14,7 +14,7 @@ typedef struct{
 }Lista;
 
 Cadastro* criacad();
-void login(Cadastro *c);
+void login(Cadastro c);
 void cadastrar(Lista *lista, Cadastro c);
 int emailvalido(char c[]);
 void editarcadastro(Lista *lista, Cadastro c); 

@@ -40,8 +40,7 @@ int main(){
     Cadastro c;
     setlocale(LC_ALL, "Portuguese");
     int tp, op, op2;
-    editarcadastro(&lista, c);
-    /*printf("===========Olá, seja bem vindo a farmacia===========\n");
+    printf("===========Olá, seja bem vindo a farmacia===========\n");
     printf("1 - Usuario Novo.\n");
     printf("2 - Usuario Existente\n");
     scanf("%i", &op);
@@ -139,6 +138,6 @@ int main(){
                 }
             }while(op != 3);
         }
-    }*/
+    }
     return(0);
 }

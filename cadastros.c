@@ -7,7 +7,7 @@ Cadastro* criacad(){
     Cadastro *c = (Cadastro *)malloc(sizeof(Cadastro));
 }
 
-void login(Cadastro *c) {
+void login(Cadastro c) {
     FILE *email = fopen("email.txt", "r");
     FILE *senha = fopen("senha.txt", "r");
 
